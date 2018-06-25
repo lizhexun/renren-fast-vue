@@ -48,14 +48,14 @@ import {
   TabPane,
   Tag,
   Tree,
-  // Alert,
+  Alert,
   // Slider,
   // Icon,
   Row,
   Col,
   Upload,
   // Progress,
-  // Badge,
+  Badge,
   Card,
   // Rate,
   // Steps,
@@ -117,14 +117,14 @@ Vue.use(Tabs)
 Vue.use(TabPane)
 Vue.use(Tag)
 Vue.use(Tree)
-// Vue.use(Alert)
+Vue.use(Alert)
 // Vue.use(Slider)
 // Vue.use(Icon)
 Vue.use(Row)
 Vue.use(Col)
 Vue.use(Upload)
 // Vue.use(Progress)
-// Vue.use(Badge)
+Vue.use(Badge)
 Vue.use(Card)
 // Vue.use(Rate)
 // Vue.use(Steps)
@@ -151,3 +151,5 @@ Vue.prototype.$confirm = MessageBox.confirm
 Vue.prototype.$prompt = MessageBox.prompt
 // Vue.prototype.$notify = Notification
 Vue.prototype.$message = Message
+
+Vue.prototype.$ELEMENT = { size: 'medium' }
