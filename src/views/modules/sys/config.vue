@@ -14,7 +14,7 @@
       :data="dataList"
       border
       v-loading="dataListLoading"
-      @selection-change="selectionChangeHandle"
+      border
       style="width: 100%;">
       <el-table-column
         type="selection"
@@ -29,17 +29,27 @@
         width="80"
         label="ID">
       </el-table-column>
+
+      <table-tree-column
+        prop="paramValue"
+        header-align="center"
+        treeKey="id"
+        width="250"
+        label="参数值">
+      </table-tree-column>
+
       <el-table-column
         prop="paramKey"
         header-align="center"
         align="center"
-        label="参数名">
+        label="参数(key)">
       </el-table-column>
       <el-table-column
-        prop="paramValue"
+        prop="parentName"
         header-align="center"
         align="center"
-        label="参数值">
+        width="120"
+        label="上级参数">
       </el-table-column>
       <el-table-column
         prop="remark"
@@ -56,6 +66,7 @@
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
           <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <el-button type="text" size="small" @click="addChild(scope.row.id)">添加</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -74,7 +85,9 @@
 </template>
 
 <script>
+  import TableTreeColumn from '@/components/table-tree-column'
   import AddOrUpdate from './config-add-or-update'
+  import { treeDataTranslate } from '@/utils'
   export default {
     data () {
       return {
@@ -91,6 +104,7 @@
       }
     },
     components: {
+      TableTreeColumn,
       AddOrUpdate
     },
     activated () {
@@ -103,19 +117,9 @@
         this.$http({
           url: this.$http.adornUrl('/sys/config/list'),
           method: 'get',
-          params: this.$http.adornParams({
-            'page': this.pageIndex,
-            'limit': this.pageSize,
-            'paramKey': this.dataForm.paramKey
-          })
+          params: this.$http.adornParams()
         }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
-          } else {
-            this.dataList = []
-            this.totalPage = 0
-          }
+          this.dataList = treeDataTranslate(data, 'id')
           this.dataListLoading = false
         })
       },
@@ -139,6 +143,13 @@
         this.addOrUpdateVisible = true
         this.$nextTick(() => {
           this.$refs.addOrUpdate.init(id)
+        })
+      },
+      // 添加下级
+      addChild (id) {
+        this.addOrUpdateVisible = true
+        this.$nextTick(() => {
+          this.$refs.addOrUpdate.addChild(id)
         })
       },
       // 删除
@@ -169,7 +180,8 @@
               this.$message.error(data.msg)
             }
           })
-        }).catch(() => {})
+        }).catch(() => {
+        })
       }
     }
   }
